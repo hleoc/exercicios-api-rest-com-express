@@ -1,5 +1,5 @@
 const express = require('express');
-const { readMoviesData, readMoviesDataId } = require('./utils/fsUtils');
+const { readMoviesData, readMoviesDataId, createMovies } = require('./utils/fsUtils');
 
 const app = express();
 
@@ -13,7 +13,13 @@ app.get('/movies', async (req, res) => {
 app.get('/movies/:id', async (req, res) => {
     const { id } = req.params;
     const readMoviesId = await readMoviesDataId(Number(id));
-    return res.status(200).json({ movie: readMoviesId });
+    return res.status(200).json({movie: readMoviesId });
 });
+
+app.post('/movies', async (req, res) => {
+    const movie = req.body;
+    const create = await createMovies(movie);
+    return res.status(201).json({ movieCreated: create });
+})
 
 module.exports = app;

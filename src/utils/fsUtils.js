@@ -16,18 +16,34 @@ async function readMoviesData() {
 
 async function readMoviesDataId(id) {
     try {
-        const data = await fs.readFile(path.resolve(__dirname, MOVIE_DATA_PATH));
-        const movieDataId = JSON.parse(data);
-        const movieId = movieDataId.filter((movie) => {
+        const movieDataId = await readMoviesData();
+        const movieId = movieDataId.find((movie) => {
             if (movie.id === id) {
                 return movie;
             }
-            return console.log('Id não encontrado.');
         });
+        if (!movieId) {
+            return console.log('Id não encontrado.');
+        }
         return movieId;
     } catch (err) {
         console.error(`Não foi possível ler o arquivo - ${err}`);
     }
 }
 
-module.exports = { readMoviesData, readMoviesDataId };
+async function createMovies(newMovie) {
+    try {
+        const oldData = await readMoviesData();
+        const newMovieWithId = { id: Date.now(), ...newMovie };
+        const allMovies = JSON.stringify([
+            ...oldData,
+            newMovieWithId
+        ]);
+        await fs.writeFile(path.resolve(__dirname, MOVIE_DATA_PATH), allMovies);
+        return newMovieWithId;
+    } catch (err) {
+        console.error(`Não foi possível ler o arquivo - ${err.message}`);
+    }
+}
+
+module.exports = { readMoviesData, readMoviesDataId, createMovies };
