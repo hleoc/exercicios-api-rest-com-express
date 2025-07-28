@@ -61,7 +61,17 @@ async function updateMovie(id, movie) {
     } catch (err) {
         console.error(`Erro na leitura do arquivo - ${err}`);
     }
-
 }
 
-module.exports = { readMoviesData, readMoviesDataId, createMovies, updateMovie };
+async function deleteMovie(id) {
+    const oldMovies = await readMoviesData();
+    const updateMovies = oldMovies.filter((movie) => movie.id !== id);
+    const updateData = JSON.stringify(updateMovies);
+    try {
+        return await fs.writeFile(path.resolve(__dirname, MOVIE_DATA_PATH), updateData);
+    } catch (err) {
+        console.error(`Erro para escrever no arquivo - ${err}`);
+    }
+}
+
+module.exports = { readMoviesData, readMoviesDataId, createMovies, updateMovie, deleteMovie };
