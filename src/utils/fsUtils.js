@@ -8,7 +8,6 @@ async function readMoviesData() {
         const data = await fs.readFile(path.resolve(__dirname, MOVIE_DATA_PATH));
         const movies = JSON.parse(data);
         return movies;
-
     } catch (err) {
         console.error(`Não foi possível ler o arquivo - ${err}`);
     }
@@ -46,4 +45,23 @@ async function createMovies(newMovie) {
     }
 }
 
-module.exports = { readMoviesData, readMoviesDataId, createMovies };
+async function updateMovie(id, movie) {
+    const data = await readMoviesData();
+    const updateMovie = {id, ...movie};
+    const updateMovies = data.reduce((moviesList, currentMovie) => {
+        if (currentMovie.id === updateMovie.id) {
+            return [...moviesList, updateMovie];
+        }
+        return [...moviesList, currentMovie];
+    }, []);
+    const updatedData = JSON.stringify(updateMovies);
+    try {
+        await fs.writeFile(path.resolve(__dirname, MOVIE_DATA_PATH), updatedData);
+        return updateMovie;
+    } catch (err) {
+        console.error(`Erro na leitura do arquivo - ${err}`);
+    }
+
+}
+
+module.exports = { readMoviesData, readMoviesDataId, createMovies, updateMovie };
