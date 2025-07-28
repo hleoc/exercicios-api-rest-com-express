@@ -22,7 +22,7 @@ async function readMoviesDataId(id) {
             }
         });
         if (!movieId) {
-            return console.log('Id não encontrado.');
+            return console.log('Id não encontrado');
         }
         return movieId;
     } catch (err) {
@@ -74,4 +74,20 @@ async function deleteMovie(id) {
     }
 }
 
-module.exports = { readMoviesData, readMoviesDataId, createMovies, updateMovie, deleteMovie };
+async function searchMovie(movie) {
+    const dataMovies = await readMoviesData();
+    if (!movie) {
+        return dataMovies;
+    }
+    const searchTerm = movie.toLowerCase();
+    const searchData = dataMovies.filter((e) => {
+        return e && e.movie && e.movie.toLowerCase().includes(searchTerm);
+    });
+    try {
+        return searchData;
+    } catch (err) {
+        console.error(`Erro na leitura do arquivo - ${err}`);
+    }
+}
+
+module.exports = { readMoviesData, readMoviesDataId, createMovies, updateMovie, deleteMovie, searchMovie };

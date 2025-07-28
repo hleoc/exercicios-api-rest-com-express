@@ -1,5 +1,5 @@
 const express = require('express');
-const { readMoviesData, readMoviesDataId, createMovies, updateMovie, deleteMovie } = require('./utils/fsUtils');
+const { readMoviesData, readMoviesDataId, createMovies, updateMovie, deleteMovie, searchMovie } = require('./utils/fsUtils');
 
 const app = express();
 
@@ -33,6 +33,12 @@ app.delete('/movies/:id', async (req, res) => {
     const { id } = req.params;
     await deleteMovie(Number(id));
     return res.status(204).end();
-})
+});
+
+app.get('/movie/search', async (req, res) => {
+    const { movie } = req.query;
+    const movieSearch = await searchMovie(movie);
+    return res.status(200).json({ movieFind: movieSearch });
+});
 
 module.exports = app;
