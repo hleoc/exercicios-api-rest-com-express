@@ -1,5 +1,5 @@
 const express = require('express');
-const { readMoviesData, readMoviesDataId, createMovies, updateMovie } = require('./utils/fsUtils');
+const { readMoviesData, readMoviesDataId, createMovies, updateMovie, deleteMovie } = require('./utils/fsUtils');
 
 const app = express();
 
@@ -28,5 +28,11 @@ app.put('/movies/:id', async (req, res) => {
     const movieUpdate = await updateMovie(Number(id), movie);
     return res.status(200).json({ updated: movieUpdate });
 });
+
+app.delete('/movies/:id', async (req, res) => {
+    const { id } = req.params;
+    await deleteMovie(Number(id));
+    return res.status(204).end();
+})
 
 module.exports = app;
